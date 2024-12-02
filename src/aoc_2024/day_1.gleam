@@ -3,7 +3,11 @@ import gleam/list
 import gleam/result
 import gleam/string
 
-pub fn parse_input(input: String) -> #(List(Int), List(Int)) {
+pub type Locations {
+  Locations(left: List(Int), right: List(Int))
+}
+
+pub fn parse(input: String) -> Locations {
   let assert [left, right] =
     input
     |> string.trim
@@ -12,17 +16,17 @@ pub fn parse_input(input: String) -> #(List(Int), List(Int)) {
       string.split(row, " ") |> list.map(int.parse) |> result.values
     })
     |> list.transpose
-  #(left, right)
+  Locations(left, right)
 }
 
-pub fn pt_1(input: String) {
-  let #(left, right) = parse_input(input)
+pub fn pt_1(input: Locations) {
+  let Locations(left, right) = input
   list.zip(list.sort(left, int.compare), list.sort(right, int.compare))
   |> list.fold(0, fn(acc, pair) { acc + int.absolute_value(pair.0 - pair.1) })
 }
 
-pub fn pt_2(input: String) {
-  let #(left, right) = parse_input(input)
+pub fn pt_2(input: Locations) {
+  let Locations(left, right) = input
   left
   |> list.map(fn(x) { list.count(right, fn(y) { x == y }) })
   |> list.zip(left)
